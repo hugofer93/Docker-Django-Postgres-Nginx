@@ -1,0 +1,11 @@
+      <div class="list-group">
+        {% for object in object_list %}
+        <a href="{{ object.getAbsoluteUrl }}" class="list-group-item list-group-item-action">{{ object }}</a>
+        {% empty %}
+        <a class="list-group-item list-group-item-action">Doesn't Exist</a>
+        {% endfor %}
+      </div>
+
+      {% if is_paginated %}
+      {% include 'store/pagination.html' %}
+      {% endif %}

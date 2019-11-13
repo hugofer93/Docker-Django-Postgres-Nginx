@@ -1,0 +1,60 @@
+version: '3.2'
+
+services:
+  postgres:
+    container_name: wogoapp_postgres
+    build:
+      context: ./postgres
+    # NOTE: 'volumes' must be created WITH enviroment variables SINCE first time
+    volumes:
+      - ./postgres/data/:/var/lib/postgresql/data/
+    env_file:
+      - ./django/.env
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    restart: always
+
+  django:
+    build: ./django
+    container_name: wogoapp_django
+    env_file:
+      - ./django/.env
+    volumes:
+      - type: bind
+        source: project
+        target: /home
+        volume:
+          nocopy: true
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    command: [python", "manage.py", "makemigrations"]
+    command: [python", "manage.py", "migrate"]
+    command: [python", "manage.py", "collectstatic"]
+    command: ["uwsgi", "--http", "0.0.0.0:8000", "--wsgi-file", "project/wsgi.py"]
+    depends_on:
+      - postgres
+    restart: always
+    
+  nginx:
+    build: ./nginx
+    container_name: wogoapp_nginx
+    volumes:
+      - type: bind
+        source: project
+        target: /home
+        volume:
+          nocopy: false
+    expose:
+      - "80"
+    ports:
+      - "80:80"
+    depends_on:
+      - django
+    restart: always
+
+volumes:
+  project:

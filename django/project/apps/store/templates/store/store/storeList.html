@@ -1,0 +1,19 @@
+{% extends 'core/base.html' %}
+
+
+{% block title %}Store List{% endblock title %}
+
+
+{% block content %}
+    <div class="container">
+      <br>
+      <h1 class="text-center">Store List</h1>
+      <p class="text-center">Clic to see details</p>
+      <br>
+      
+      {% include 'store/list.html' %}
+      <br>
+      <a class="btn btn-success" href="{% url 'store:addStore' %}">Add Store</a>
+      <a class="btn btn-info" href="{% url 'store:index' %}">Go to Index</a>
+    </div>
+{% endblock content %}
